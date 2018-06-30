@@ -14,6 +14,8 @@
 		A338DC4D20E52EB000ED5EF0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A338DC4B20E52EB000ED5EF0 /* LaunchScreen.storyboard */; };
 		A338DC5820E52EB100ED5EF0 /* testMetalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A338DC5720E52EB100ED5EF0 /* testMetalTests.swift */; };
 		A338DC6320E52EB100ED5EF0 /* testMetalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A338DC6220E52EB100ED5EF0 /* testMetalUITests.swift */; };
+		A338DC7120E52F5F00ED5EF0 /* shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = A338DC7020E52F5F00ED5EF0 /* shader.metal */; };
+		A338DC7320E52FB600ED5EF0 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A338DC7220E52FB600ED5EF0 /* MetalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		A338DC5E20E52EB100ED5EF0 /* testMetalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = testMetalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A338DC6220E52EB100ED5EF0 /* testMetalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testMetalUITests.swift; sourceTree = "<group>"; };
 		A338DC6420E52EB100ED5EF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A338DC7020E52F5F00ED5EF0 /* shader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shader.metal; sourceTree = "<group>"; };
+		A338DC7220E52FB600ED5EF0 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				A338DC4920E52EB000ED5EF0 /* Assets.xcassets */,
 				A338DC4B20E52EB000ED5EF0 /* LaunchScreen.storyboard */,
 				A338DC4E20E52EB000ED5EF0 /* Info.plist */,
+				A338DC7020E52F5F00ED5EF0 /* shader.metal */,
+				A338DC7220E52FB600ED5EF0 /* MetalView.swift */,
 			);
 			path = testMetal;
 			sourceTree = "<group>";
@@ -256,7 +262,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A338DC7320E52FB600ED5EF0 /* MetalView.swift in Sources */,
 				A338DC4520E52EA500ED5EF0 /* ViewController.swift in Sources */,
+				A338DC7120E52F5F00ED5EF0 /* shader.metal in Sources */,
 				A338DC4320E52EA500ED5EF0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
