@@ -2,12 +2,14 @@ import MetalKit
 
 struct Vertex {
     var position: vector_float4
+    var pointSize: Float
     var color: vector_float4
 }
 
 struct Poi {
     var x: float_t
     var y: float_t
+    var lf: UInt32
 }
 
 class MetalView: MTKView {
@@ -18,7 +20,7 @@ class MetalView: MTKView {
 //    let device = MTLCreateSystemDefaultDevice()!
     private var renderPipeline: MTLRenderPipelineState!
     private let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-    private var renderPipelineState: MTLRenderPipelineState!
+//    private var renderPipelineState: MTLRenderPipelineState!
 
     public func setup() {
         self.device = MTLCreateSystemDefaultDevice()
@@ -31,42 +33,75 @@ class MetalView: MTKView {
         self.renderPipelineDescriptor.vertexFunction = vertexFunction
         self.renderPipelineDescriptor.fragmentFunction = fragmentFunction
         self.renderPipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        do {
-            self.renderPipelineState = try self.device?.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-        } catch let error {
-            NSLog("\(error)")
-        }
 
+
+    }
+
+    public func setPoint(init ini: Bool) -> Poi {
+        var lf: UInt32!
+        if ini {
+            lf = arc4random_uniform(1000)
+        } else {
+            lf = 300
+        }
+        var tmp = arc4random_uniform(200)
+        let x = Float(tmp) / 100.0 - 1.0
+        tmp = arc4random_uniform(200)
+        let y = Float(tmp) / 100.0 - 1.0
+        return Poi(x: x, y: y, lf: lf)
     }
     
     public func setPoints() {
-        let poi = Poi(x: 0.1, y: 0.1)
-        points.append(poi)
+        let x_count = 20
+        let y_count = 20
+        for _ in 0..<Int(x_count) {
+            for _ in 0..<Int(y_count) {
+                points.append(setPoint(init: true))
+            }
+        }
     }
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        points[0].x = points[0].x + 0.0001
-        points[0].y = points[0].y + 0.001
-
-        
-        let vertexData = [Vertex(position: [points[0].x-0.1, points[0].y, 0.0, 1.0], color: [1, 0, 0, 1]),
-                          Vertex(position: [ points[0].x, points[0].y, 0.0, 1.0], color: [0, 1, 0, 1]),
-                          Vertex(position: [points[0].x-0.05,  points[0].y + 0.05, 0.0, 1.0], color: [0, 0, 1, 1]),]
-        let vertexBuffer = device?.makeBuffer(bytes: vertexData, length: MemoryLayout.size(ofValue: vertexData[0]) * vertexData.count, options:[])
-        
         guard let renderPassDescriptor = self.currentRenderPassDescriptor, let drawable = self.currentDrawable else {
             return
         }
-        
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0.7, 0, 1.0)
+
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.8, 0.8, 0.8, 0.1)
         let commandBuffer = device?.makeCommandQueue()?.makeCommandBuffer()
         let renderCommandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
-        renderCommandEncoder?.setRenderPipelineState(renderPipelineState!)
+            
+        for i in 0..<points.count {
+            points[i].lf += 1
+            
+            if points[i].lf < 300 {
+                continue
+            } else if (points[i].lf > 1000) {
+                points[i] = setPoint(init: false)
+            }
+            points[i].x = points[i].x + 0.002
+            points[i].y = points[i].y + 0.004
 
-        renderCommandEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        renderCommandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3, instanceCount: 1)
+            var vertexData = [Vertex(position: [points[i].x, points[i].y, 0.0, 1.0], pointSize: Float(10.0), color: [0.4, 0.4, 0.4, 1]),]
+            print(points[i].lf)
+//            var vertexData = [Vertex(position: [points[i].x-1.0, points[i].y-1.0, 0.0, 1.0], color: [1, 0, 0, 1]),
+//                              Vertex(position: [ points[i].x-0.9, points[i].y-1, 0.0, 1.0], color: [0, 1, 0, 1]),
+//                              Vertex(position: [points[i].x-0.95,  points[i].y-0.95, 0.0, 1.0], color: [0, 0, 1, 1]),]
+
+            let vertexBuffer = device?.makeBuffer(bytes: vertexData, length: MemoryLayout.size(ofValue: vertexData[0]) * vertexData.count, options:[])
+
+            do {
+                let renderPipelineState = try self.device?.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
+                renderCommandEncoder?.setRenderPipelineState(renderPipelineState!)
+                renderCommandEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+//                renderCommandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3, instanceCount: 1)
+                renderCommandEncoder?.drawPrimitives(type: .point, vertexStart: 0, vertexCount: 3, instanceCount: 1)
+            } catch let error {
+                NSLog("\(error)")
+            }
+
+        }
         renderCommandEncoder?.endEncoding()
         commandBuffer?.present(drawable)
         commandBuffer?.commit()
